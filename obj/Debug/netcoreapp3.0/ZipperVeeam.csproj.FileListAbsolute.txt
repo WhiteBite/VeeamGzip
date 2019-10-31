@@ -1,0 +1,11 @@
+C:\Users\Lord\source\repos\gzip-test\ZipperVeeam\bin\Debug\netcoreapp3.0\ZipperVeeam.exe
+C:\Users\Lord\source\repos\gzip-test\ZipperVeeam\bin\Debug\netcoreapp3.0\ZipperVeeam.deps.json
+C:\Users\Lord\source\repos\gzip-test\ZipperVeeam\bin\Debug\netcoreapp3.0\ZipperVeeam.runtimeconfig.json
+C:\Users\Lord\source\repos\gzip-test\ZipperVeeam\bin\Debug\netcoreapp3.0\ZipperVeeam.runtimeconfig.dev.json
+C:\Users\Lord\source\repos\gzip-test\ZipperVeeam\bin\Debug\netcoreapp3.0\ZipperVeeam.dll
+C:\Users\Lord\source\repos\gzip-test\ZipperVeeam\bin\Debug\netcoreapp3.0\ZipperVeeam.pdb
+C:\Users\Lord\source\repos\gzip-test\ZipperVeeam\obj\Debug\netcoreapp3.0\ZipperVeeam.csprojAssemblyReference.cache
+C:\Users\Lord\source\repos\gzip-test\ZipperVeeam\obj\Debug\netcoreapp3.0\ZipperVeeam.AssemblyInfoInputs.cache
+C:\Users\Lord\source\repos\gzip-test\ZipperVeeam\obj\Debug\netcoreapp3.0\ZipperVeeam.AssemblyInfo.cs
+C:\Users\Lord\source\repos\gzip-test\ZipperVeeam\obj\Debug\netcoreapp3.0\ZipperVeeam.dll
+C:\Users\Lord\source\repos\gzip-test\ZipperVeeam\obj\Debug\netcoreapp3.0\ZipperVeeam.pdb
