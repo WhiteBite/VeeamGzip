@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Lord\\source\\repos\\gzip-test\\ZipperVeeam\\ZipperVeeam.csproj",
+      "projectUniqueName": "C:\\Users\\Lord\\source\\repos\\gzip-test\\ZipperVeeam\\VeeamGzip\\ZipperVeeam.csproj",
       "projectName": "ZipperVeeam",
-      "projectPath": "C:\\Users\\Lord\\source\\repos\\gzip-test\\ZipperVeeam\\ZipperVeeam.csproj",
+      "projectPath": "C:\\Users\\Lord\\source\\repos\\gzip-test\\ZipperVeeam\\VeeamGzip\\ZipperVeeam.csproj",
       "packagesPath": "C:\\Users\\Lord\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Lord\\source\\repos\\gzip-test\\ZipperVeeam\\obj\\",
+      "outputPath": "C:\\Users\\Lord\\source\\repos\\gzip-test\\ZipperVeeam\\VeeamGzip\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Lord\\AppData\\Roaming\\NuGet\\NuGet.Config",
