@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using ZipperVeeam;
 
 namespace GZipTest
 {
     class ParallelByteArrayTransformer
     {
-        public delegate void TransformMethod(DataBlock dataBlock);
-        public delegate void ConsumeMethod(DataBlock dataBlock);
+        bool _isCompress;
 
         private bool _aborting;
         private bool _exiting;
@@ -31,7 +32,48 @@ namespace GZipTest
             _processorCount = Environment.ProcessorCount;
         }
 
-        public bool Transform(BlockSupplier blockSupplier, TransformMethod transformMethod, ConsumeMethod consumeMethod)
+        public void _CompressMethod(DataBlock dataBlock)
+        {
+
+            using (var ms = new MemoryStream())
+            {
+                using (var gzip = new GZipStream(ms, CompressionMode.Compress, true))
+                {
+                    gzip.Write(dataBlock.Data, 0, dataBlock.Size);
+                }
+                ms.Seek(4, 0);
+                ms.Write(BitConverter.GetBytes((int)ms.Length), 0, 4);
+                dataBlock.Data = ms.ToArray();
+            }
+        }
+
+        public void _DeCompressMethod(DataBlock dataBlock)
+        {
+            using (var ms = new MemoryStream(dataBlock.Data))
+            using (var gzip = new GZipStream(ms, CompressionMode.Decompress))
+            {
+                var outbuf = new byte[ms.Length * 2];
+                int bytesRead = 1, offset = 0;
+
+                while (bytesRead > 0)
+                {
+                    bytesRead = gzip.Read(outbuf, offset, outbuf.Length - offset);
+                    offset += bytesRead;
+
+                    if (offset == outbuf.Length) Array.Resize(ref outbuf, outbuf.Length * 2);
+                }
+
+                Array.Resize(ref outbuf, offset);
+                dataBlock.Data = outbuf;
+            }
+        }
+
+        public void _ConsumeMethod(DataBlock dataBlock, Stream destination)
+        {
+            destination.Write(dataBlock.Data, 0, dataBlock.Size);
+        }
+
+        public bool Transform(BlockSupplier blockSupplier, Stream destination)
         {
             var threadList = new List<Thread>();
 
@@ -45,13 +87,13 @@ namespace GZipTest
                 processors[i] = new Thread(Process)
                 { Name = $"worker {i}", IsBackground = true, Priority = ThreadPriority.AboveNormal };
                 threadList.Add(processors[i]);
-                processors[i].Start(transformMethod);
+                processors[i].Start();
                 Thread.Sleep(20);
             }
 
             var consumer = new Thread(Consume) { Name = "Writer", IsBackground = true, Priority = ThreadPriority.Normal };
             threadList.Add(consumer);
-            consumer.Start(consumeMethod);
+            consumer.Start(destination);
 
             supplier.Join();
             for (int i = 0; i < processors.Length; i++)
@@ -87,9 +129,8 @@ namespace GZipTest
 
         }
 
-        private void Process(object o)
+        private void Process()
         {
-            TransformMethod transform = (TransformMethod)o;
 
             DataBlock dataBlock;
 
@@ -107,8 +148,10 @@ namespace GZipTest
                         break;
                     }
 
-                    transform(dataBlock);
-
+                    if (Constants.isCompress)
+                        _CompressMethod(dataBlock);
+                    else
+                        _DeCompressMethod(dataBlock);
                     while (!queue2.TryEnqueue(dataBlock, timeout: 100) && !_aborting) ;
                 }
             }
@@ -121,7 +164,8 @@ namespace GZipTest
 
         private void Consume(object o)
         {
-            ConsumeMethod consume = (ConsumeMethod)o;
+            Stream destination = (Stream)o;
+           // ConsumeMethod consume = (ConsumeMethod)o;
             try
             {
                 DataBlock dataBlock;
@@ -136,7 +180,7 @@ namespace GZipTest
 
                     if (dataBlock.ID == partNo)
                     {
-                        consume(dataBlock);
+                        _ConsumeMethod(dataBlock, destination);
                         partNo++;
                     }
                     else lostAndFound.Add(dataBlock);
@@ -155,12 +199,13 @@ namespace GZipTest
                             exit = true;
                             break;
                         }
-                        consume(dataBlock);
+                        _ConsumeMethod(dataBlock, destination);
                     }
                     if (exit) break;
                 }
             }
-            catch (Exception e){
+            catch (Exception e)
+            {
                 _exception = e;
                 _aborting = true;
             }
