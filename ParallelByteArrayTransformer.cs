@@ -11,7 +11,7 @@ namespace ZipperVeeam
 {
     class ParallelByteArrayTransformer
     {
-        private Exception _exception { set; get; }
+        private Exception exception { set; get; }
         private int _processorCount;
 
 
@@ -54,7 +54,6 @@ namespace ZipperVeeam
             {
                 return false;
             }
-            //return !_aborting;
             return true;
         }
     }
