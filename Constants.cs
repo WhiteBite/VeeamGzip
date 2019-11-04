@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ZipperVeeam
+﻿namespace ZipperVeeam
 {
     public class Constants
     {
@@ -15,7 +11,5 @@ namespace ZipperVeeam
         public const byte CompressionMethod_Deflate = 0x08;
         public const int Timeout = 100;
         public const int QueueSize = 100;
-        //TODO
-        public static bool isCompress = true;
     }
 }

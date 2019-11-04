@@ -1,17 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using ZipperVeeam;
 
 namespace ZipperVeeam
 {
     class ParallelByteArrayTransformer
     {
-        private Exception exception { set; get; }
         private int _processorCount;
 
 
@@ -50,8 +45,9 @@ namespace ZipperVeeam
                 }
                 consumer.Join();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
+                ZipperVeeam.HandlerGzip.PrintError(e);
                 return false;
             }
             return true;

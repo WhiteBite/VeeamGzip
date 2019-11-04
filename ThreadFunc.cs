@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Text;
-using System.Threading;
 
 namespace ZipperVeeam
 {
@@ -11,8 +9,7 @@ namespace ZipperVeeam
     {
         private ConcurrentQueue<DataBlock> queue1 = new ConcurrentQueue<DataBlock>(Constants.QueueSize);
         private ConcurrentQueue<DataBlock> queue2 = new ConcurrentQueue<DataBlock>(Constants.QueueSize);
-        //  public ManualResetEvent state = new ManualResetEvent(false);
-        private Exception ex ;
+        private Exception ex;
         private object locker = new object();
 
         bool _exiting = false;
@@ -115,7 +112,7 @@ namespace ZipperVeeam
 
                     if (Environment.GetCommandLineArgs()[1].ToLower() == "compress")
                         _CompressMethod(dataBlock);
-                    else if(Environment.GetCommandLineArgs()[1].ToLower() == "decompress")
+                    else if (Environment.GetCommandLineArgs()[1].ToLower() == "decompress")
                         _DeCompressMethod(dataBlock);
                     while (!queue2.TryEnqueue(dataBlock) && localException != null) ;
                 }

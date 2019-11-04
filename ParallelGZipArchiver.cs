@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
-using System.Text;
-using ZipperVeeam;
 
 namespace ZipperVeeam
 {
@@ -16,7 +12,7 @@ namespace ZipperVeeam
 
         public bool Compress(Stream source, Stream destination)
         {
-            var blockSupplier = new NonCompressedBlockSupplier(source, Constants.BufSize);            
+            var blockSupplier = new NonCompressedBlockSupplier(source, Constants.BufSize);
             // Сжимает блок и в поле MTIME заголовка записывает размер выходного потока
             if (_transformer.Transform(blockSupplier, destination))
                 return true;
@@ -79,6 +75,6 @@ namespace ZipperVeeam
             }
         }
 
- 
+
     }
 }

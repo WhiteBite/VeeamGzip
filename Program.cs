@@ -1,23 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Threading;
-using ZipperVeeam;
 
-//1) При декомпрессии ни ресурсы CPU, ни ресурсы диска не используются на 100%. Это приводит к не оптимальному времени работы.Можно ли это исправить?
-//2) Проблемы с ООП:
-//++  a.В классе Program происходит смешение ответственностей: обработка аргументов, управление потоками и т.д.
-//++ b.В классе ParallelByteArrayTransformer также происходит смешение ответственностей: управление потоками, работа с очередями и т.д.
-//Можно ли это исправить?
-//3)++  Требуется продемонстрировать ООП, а не функциональный подход.Это касается следующих моментов:
-//++ a.ParallelByteArrayTransformer.TransformMethod.
-//++ b.ParallelByteArrayTransformer.ConsumeMethod.
-//++ c.Использование анонимных делегатов для этих методов.
-//4) В коде большое количество «магических чисел». Требуется исправить это.
-//5) При повторных сжатиях файлов их размер начинает ощутимо расти.Можно ли исправить это?
+
 
 namespace ZipperVeeam
 {
@@ -25,8 +10,6 @@ namespace ZipperVeeam
     {
         public static void Main(string[] args)
         {
-            //string[] q = Environment.GetCommandLineArgs();
-            //Console.WriteLine(Environment.GetCommandLineArgs()[1]);
             start(args);
         }
 
@@ -50,12 +33,10 @@ namespace ZipperVeeam
                 switch (args[0])
                 {
                     case "compress":
-                        Constants.isCompress = true;
                         handler.Сompress(args[1], args[2]);
                         break;
 
                     case "decompress":
-                        Constants.isCompress = false;
                         handler.Decompress(args[1], args[2]);
                         break;
 

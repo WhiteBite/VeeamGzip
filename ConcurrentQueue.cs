@@ -15,7 +15,7 @@ namespace ZipperVeeam
             _semDequeue = new Semaphore(0, capacity);
         }
 
-        public bool TryEnqueue(T element, int timeout=Constants.Timeout)
+        public bool TryEnqueue(T element, int timeout = Constants.Timeout)
         {
             if (_semEnqueue.WaitOne(timeout))
             {
@@ -32,7 +32,7 @@ namespace ZipperVeeam
             }
         }
 
-        public bool TryDequeue(out T element, int timeout=100)
+        public bool TryDequeue(out T element, int timeout = 100)
         {
             if (_semDequeue.WaitOne(timeout))
             {

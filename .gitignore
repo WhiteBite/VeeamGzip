@@ -363,3 +363,7 @@ obj/Debug/netcoreapp3.0/ZipperVeeam.pdb
 .vs/ZipperVeeam/v16/.suo
 *.dll
 bin/Debug/netcoreapp3.0/ZipperVeeam.pdb
+.vs/ZipperVeeam/v16/.suo
+.vs/ZipperVeeam/DesignTimeBuild/.dtbcache
+bin/Debug/netcoreapp3.0/ZipperVeeam.dll
+bin/Debug/netcoreapp3.0/ZipperVeeam.pdb

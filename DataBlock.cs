@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace ZipperVeeam
 {
@@ -16,14 +13,6 @@ namespace ZipperVeeam
         {
             get
             {
-                //if (Data==null)
-                //{
-                //    return 0;
-                //}
-                //else
-                //{
-                //    return Data.Length;
-                //}
                 return Data?.Length ?? 0;
             }
         }
@@ -40,6 +29,6 @@ namespace ZipperVeeam
         }
 
         public override string ToString() => $"ID: {ID}";
-        
+
     }
 }
