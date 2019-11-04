@@ -27,7 +27,6 @@ namespace ZipperVeeam
         {
 
             var blockSupplier = new GZipCompressedBlockSupplier(source);
-
             if (_transformer.Transform(blockSupplier, destination))
                 return true;
             else

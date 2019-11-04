@@ -18,6 +18,11 @@ namespace ZipperVeeam
         {
             if (args.Length != 3) { ZipperVeeam.HandlerGzip.PrintUsage(); return; }
 
+            if (!File.Exists(args[1]))
+            {
+                Console.WriteLine("File not found!");
+                return 1;
+            }
             Console.WriteLine("Start");
             var timer = new Stopwatch();
             var pgzip = new ParallelGZipArchiver();
