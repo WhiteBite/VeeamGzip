@@ -25,9 +25,9 @@ namespace ZipperVeeam
     {
         public static void Main(string[] args)
         {
-            // Console.ReadKey();
+            //string[] q = Environment.GetCommandLineArgs();
+            //Console.WriteLine(Environment.GetCommandLineArgs()[1]);
             start(args);
-            //test2(34);
         }
 
 

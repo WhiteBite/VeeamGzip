@@ -9,9 +9,8 @@ namespace ZipperVeeam
 {
     class ThreadFunc
     {
-        //TODO CONST 20
-        private ConcurrentQueue<DataBlock> queue1 = new ConcurrentQueue<DataBlock>(20);
-        private ConcurrentQueue<DataBlock> queue2 = new ConcurrentQueue<DataBlock>(20);
+        private ConcurrentQueue<DataBlock> queue1 = new ConcurrentQueue<DataBlock>(Constants.QueueSize);
+        private ConcurrentQueue<DataBlock> queue2 = new ConcurrentQueue<DataBlock>(Constants.QueueSize);
         //  public ManualResetEvent state = new ManualResetEvent(false);
         private Exception ex ;
         private object locker = new object();
@@ -114,9 +113,9 @@ namespace ZipperVeeam
                         break;
                     }
 
-                    if (Constants.isCompress)
+                    if (Environment.GetCommandLineArgs()[1].ToLower() == "compress")
                         _CompressMethod(dataBlock);
-                    else
+                    else if(Environment.GetCommandLineArgs()[1].ToLower() == "decompress")
                         _DeCompressMethod(dataBlock);
                     while (!queue2.TryEnqueue(dataBlock) && localException != null) ;
                 }

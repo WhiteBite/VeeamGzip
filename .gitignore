@@ -357,3 +357,9 @@ MigrationBackup/
 obj/Debug/netcoreapp3.0/ZipperVeeam.pdb
 *.dll
 *.cache
+.vs/ZipperVeeam/DesignTimeBuild/.dtbcache
+.vs/ZipperVeeam/DesignTimeBuild/.dtbcache
+.vs/ZipperVeeam/DesignTimeBuild/.dtbcache
+.vs/ZipperVeeam/v16/.suo
+*.dll
+bin/Debug/netcoreapp3.0/ZipperVeeam.pdb
