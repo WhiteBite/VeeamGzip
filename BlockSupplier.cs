@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using ZipperVeeam;
 
-namespace GZipTest
+namespace ZipperVeeam
 {
     internal abstract class BlockSupplier
     {
@@ -25,7 +25,7 @@ namespace GZipTest
 
         public NonCompressedBlockSupplier(Stream sourceStream, int blockSize) : base(sourceStream)
         {
-            _blockSize = blockSize;    
+            _blockSize = blockSize;
         }
 
         public override DataBlock Next()
@@ -34,6 +34,7 @@ namespace GZipTest
             {
                 var dataBlock = new DataBlock(PartNumber++, new byte[_blockSize]);
                 int bytesRead, offset = 0;
+
 
                 do
                 {
@@ -59,18 +60,17 @@ namespace GZipTest
         {
             lock (SourceStream)
             {
-                var buf = new byte[10];
+                var buf = new byte[Constants.HeaderSize];
                 var bytesRead = SourceStream.Read(buf, 0, buf.Length);
                 if (bytesRead == 0) return new DataBlock(PartNumber++, new byte[0]);
                 if (buf[0] != Constants.HeaderByte1 || buf[1] != Constants.HeaderByte2 || buf[2] != Constants.CompressionMethod_Deflate)
                     throw new InvalidDataException("Archive is not valid or it was not created by this program.");
 
-                var blockSize = BitConverter.ToInt32(buf, 4);
+                var blockSize = BitConverter.ToInt32(buf, sizeof(Int32));
                 buf = new byte[blockSize];
 
-                SourceStream.Position -= 10;
+                SourceStream.Position -= Constants.HeaderSize;
                 var offset = 0;
-
                 do
                 {
                     bytesRead = SourceStream.Read(buf, offset, buf.Length - offset);

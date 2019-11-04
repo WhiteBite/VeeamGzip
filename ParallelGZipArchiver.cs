@@ -4,8 +4,9 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
+using ZipperVeeam;
 
-namespace GZipTest
+namespace ZipperVeeam
 {
 
 
@@ -21,14 +22,9 @@ namespace GZipTest
 
         public bool Compress(Stream source, Stream destination)
         {
-            var blockSupplier = new NonCompressedBlockSupplier(source, 1024 * 1024);
-
-
-
+            var blockSupplier = new NonCompressedBlockSupplier(source, Constants.BufSize);            
             // Сжимает блок и в поле MTIME заголовка записывает размер выходного потока
-
-
-            if (_transformer.Transform(blockSupplier,destination))
+            if (_transformer.Transform(blockSupplier, destination))
                 return true;
             else
             {
@@ -39,12 +35,10 @@ namespace GZipTest
 
         public bool Decompress(Stream source, Stream destination)
         {
-            long _srcpos = source.Position;
-            long _dstpos = destination.Position;
 
             var blockSupplier = new GZipCompressedBlockSupplier(source);
 
-            if (_transformer.Transform(blockSupplier,  destination))
+            if (_transformer.Transform(blockSupplier, destination))
                 return true;
             else
             {
@@ -59,8 +53,6 @@ namespace GZipTest
 
                 Console.WriteLine("Main algorythm failed. Let's try other way.");
 
-                source.Position = _srcpos;
-                destination.Position = _dstpos;
 
                 return BackupDecompress(source, destination);
             }
@@ -70,7 +62,7 @@ namespace GZipTest
         {
             try
             {
-                var buf = new byte[1024 * 1024];
+                var buf = new byte[Constants.BufSize];
                 var bytesRead = 1;
 
                 while (source.Position != source.Length)
@@ -93,9 +85,6 @@ namespace GZipTest
             }
         }
 
-        public void Cancel()
-        {
-            _transformer.Cancel();
-        }
+ 
     }
 }

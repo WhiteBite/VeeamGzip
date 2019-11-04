@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 
-namespace GZipTest
+namespace ZipperVeeam
 {
     class ConcurrentQueue<T>
     {
@@ -15,7 +15,7 @@ namespace GZipTest
             _semDequeue = new Semaphore(0, capacity);
         }
 
-        public bool TryEnqueue(T element, int timeout)
+        public bool TryEnqueue(T element, int timeout=Constants.Timeout)
         {
             if (_semEnqueue.WaitOne(timeout))
             {
@@ -32,7 +32,7 @@ namespace GZipTest
             }
         }
 
-        public bool TryDequeue(out T element, int timeout)
+        public bool TryDequeue(out T element, int timeout=100)
         {
             if (_semDequeue.WaitOne(timeout))
             {
