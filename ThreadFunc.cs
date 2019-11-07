@@ -12,6 +12,7 @@ namespace ZipperVeeam
         private Exception ex;
         private object locker = new object();
 
+        bool isCompress = false;
         bool _exiting = false;
         public Exception localException
         {
@@ -27,9 +28,14 @@ namespace ZipperVeeam
             }
         }
 
-        public ThreadFunc()
+        /// <summary>
+        /// 0 - Decompress; 1 - Compress
+        /// </summary>
+        /// <param name="compressMethod"></param>
+        public ThreadFunc(bool compressMethod)
         {
             ex = null;
+            isCompress = compressMethod;
         }
 
 

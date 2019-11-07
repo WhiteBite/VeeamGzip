@@ -14,7 +14,7 @@ namespace ZipperVeeam
         {
             var blockSupplier = new NonCompressedBlockSupplier(source, Constants.BufSize);
             // Сжимает блок и в поле MTIME заголовка записывает размер выходного потока
-            if (_transformer.Transform(blockSupplier, destination))
+            if (_transformer.Transform(blockSupplier, destination,true))
                 return true;
             else
             {
@@ -27,12 +27,11 @@ namespace ZipperVeeam
         {
 
             var blockSupplier = new GZipCompressedBlockSupplier(source);
-            if (_transformer.Transform(blockSupplier, destination))
+            if (_transformer.Transform(blockSupplier, destination,false))
                 return true;
             else
             {
-                Exception = new OperationCanceledException("Operation was cancelled by request from user."); ;
-
+                Exception = new OperationCanceledException("Operation was cancelled by request from user.");
                 if (Exception is IOException ||
                     Exception is InvalidOperationException ||
                     Exception is ObjectDisposedException)
@@ -73,7 +72,5 @@ namespace ZipperVeeam
                 return false;
             }
         }
-
-
     }
 }

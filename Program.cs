@@ -14,9 +14,9 @@ namespace ZipperVeeam
         }
 
 
-        public static void start(string[] args)
+        public static int start(string[] args)
         {
-            if (args.Length != 3) { ZipperVeeam.HandlerGzip.PrintUsage(); return; }
+            if (args.Length != 3) { ZipperVeeam.HandlerGzip.PrintUsage(); return 0; }
 
             if (!File.Exists(args[1]))
             {
@@ -25,8 +25,6 @@ namespace ZipperVeeam
             }
             Console.WriteLine("Start");
             var timer = new Stopwatch();
-            var pgzip = new ParallelGZipArchiver();
-
             ZipperVeeam.HandlerGzip handler = new ZipperVeeam.HandlerGzip();
 
             try
@@ -47,7 +45,7 @@ namespace ZipperVeeam
 
                     default:
                         ZipperVeeam.HandlerGzip.PrintUsage();
-                        return;
+                        return 0;
                 }
             }
             catch (Exception e)
@@ -57,6 +55,7 @@ namespace ZipperVeeam
             }
             timer.Stop();
             Console.WriteLine($"Success! Elapsed time: {timer.ElapsedMilliseconds}ms");
+            return 0;
         }
     }
 }
