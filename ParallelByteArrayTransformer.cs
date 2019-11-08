@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace ZipperVeeam
 {
-    class ParallelByteArrayTransformer
+    internal class ParallelByteArrayTransformer
     {
         private int _processorCount;
 
@@ -14,17 +14,23 @@ namespace ZipperVeeam
         {
             _processorCount = Environment.ProcessorCount;
         }
-
-        public bool Transform(BlockSupplier blockSupplier, Stream destination)
+        /// <summary>
+        /// Transform method
+        /// false - Decompress;
+        /// true - Compress;
+        /// </summary>
+        public bool Transform(BlockSupplier blockSupplier, Stream destination,bool transformMethod)
         {
             try
             {
                 var threadList = new List<Thread>();
-                ThreadFunc threadFunc = new ThreadFunc();
+                ThreadFunc threadFunc = new ThreadFunc(transformMethod);
                 var supplier = new Thread(threadFunc.Supply) { Name = "Supplier", IsBackground = true, Priority = ThreadPriority.Normal };
                 threadList.Add(supplier);
                 supplier.Start(blockSupplier);
                 int procLim = _processorCount - 2;
+                if (procLim <= 0)
+                    procLim = 1;
                 var processors = new Thread[procLim];
                 for (int i = 0; i < procLim; i++)
                 {
@@ -39,9 +45,9 @@ namespace ZipperVeeam
                 consumer.Start(destination);
 
                 supplier.Join();
-                for (int i = 0; i < processors.Length; i++)
+                foreach (var t in processors)
                 {
-                    processors[i].Join();
+                    t.Join();
                 }
                 consumer.Join();
             }

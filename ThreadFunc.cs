@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Threading;
 
 namespace ZipperVeeam
 {
     class ThreadFunc
     {
-        private ConcurrentQueue<DataBlock> queue1 = new ConcurrentQueue<DataBlock>(Constants.QueueSize);
-        private ConcurrentQueue<DataBlock> queue2 = new ConcurrentQueue<DataBlock>(Constants.QueueSize);
+        private MyConcurrentQueue<DataBlock> queue1 = new MyConcurrentQueue<DataBlock>(Constants.QueueSize);
+        private MyConcurrentQueue<DataBlock> queue2 = new MyConcurrentQueue<DataBlock>(Constants.QueueSize);
         private Exception ex;
         private object locker = new object();
 
@@ -29,7 +30,8 @@ namespace ZipperVeeam
         }
 
         /// <summary>
-        /// 0 - Decompress; 1 - Compress
+        /// false - Decompress;
+        /// true - Compress
         /// </summary>
         /// <param name="compressMethod"></param>
         public ThreadFunc(bool compressMethod)
@@ -76,18 +78,23 @@ namespace ZipperVeeam
 
         public void _ConsumeMethod(DataBlock dataBlock, Stream destination)
         {
+            Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fffff}]: [{Thread.CurrentThread.ManagedThreadId}] _ConsumeMethod block #{dataBlock.ID} start");
             destination.Write(dataBlock.Data, 0, dataBlock.Size);
+            Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss.fffff")}]: [{Thread.CurrentThread.ManagedThreadId}] _ConsumeMethod block #{dataBlock.ID} end");
         }
 
         public void Supply(object o)
-        {
+        { 
             try
             {
                 BlockSupplier supp = (BlockSupplier)o;
                 DataBlock dataBlock;
+                Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss.fffff")}]: [{Thread.CurrentThread.ManagedThreadId}] Supply block start");
                 do
                 {
                     dataBlock = supp.Next();
+
+                    Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss.fffff")}]: [{Thread.CurrentThread.ManagedThreadId}] Supply block #{dataBlock.ID}");
                     while (!queue1.TryEnqueue(dataBlock) && localException != null) ;
                 }
                 while (dataBlock.Size > 0);
@@ -96,12 +103,14 @@ namespace ZipperVeeam
             {
                 localException = e;
             }
+            Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss.fffff")}]: [{Thread.CurrentThread.ManagedThreadId}] Supply block end");
 
         }
 
         public void Process()
         {
             DataBlock dataBlock;
+            Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss.fffff")}]: [{Thread.CurrentThread.ManagedThreadId}] Processing block start");
             try
             {
                 while (true)
@@ -115,10 +124,10 @@ namespace ZipperVeeam
                         _exiting = true;
                         break;
                     }
-
-                    if (Environment.GetCommandLineArgs()[1].ToLower() == "compress")
+                    Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss.fffff")}]: [{Thread.CurrentThread.ManagedThreadId}] Processing block #{dataBlock.ID}");
+                    if (isCompress)
                         _CompressMethod(dataBlock);
-                    else if (Environment.GetCommandLineArgs()[1].ToLower() == "decompress")
+                    else
                         _DeCompressMethod(dataBlock);
                     while (!queue2.TryEnqueue(dataBlock) && localException != null) ;
                 }
@@ -127,6 +136,7 @@ namespace ZipperVeeam
             {
                 localException = e;
             }
+            Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss.fffff")}]: [{Thread.CurrentThread.ManagedThreadId}] Processing block end");
         }
 
         public void Consume(object o)

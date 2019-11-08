@@ -10,6 +10,6 @@
         public const byte HeaderByte2 = 0x8b;
         public const byte CompressionMethod_Deflate = 0x08;
         public const int Timeout = 100;
-        public const int QueueSize = 100;
+        public const int QueueSize = 3000;
     }
 }

@@ -10,10 +10,26 @@ namespace ZipperVeeam
     {
         public static void Main(string[] args)
         {
-            start(args);
+            // start(args);
+            test(2);
         }
 
+        public static void test(int count)
+        {
 
+            //for (int i = 0; i < count; i++)
+            // {
+            //   string[] q1 = { "compress", "decompressed_test" + i.ToString() + ".iso", "compressed_test" + (i).ToString() + ".iso" };
+            //   start(q1);
+            int i = 2;
+       //     string[] q1 = { "compress", "decompressed_test" + i.ToString() + ".iso", "compressed_test" + (i).ToString() + ".iso" };
+       //     start(q1);
+            string[] q2 = { "decompress", "compressed_test" + (i).ToString() + ".iso", "decompressed_test" + (i + 1).ToString() + ".iso" };
+            start(q2);
+
+
+            //  }
+        }
         public static int start(string[] args)
         {
             if (args.Length != 3) { ZipperVeeam.HandlerGzip.PrintUsage(); return 0; }
@@ -27,16 +43,20 @@ namespace ZipperVeeam
             var timer = new Stopwatch();
             ZipperVeeam.HandlerGzip handler = new ZipperVeeam.HandlerGzip();
 
+            ParallelGZipArchiver pgzip = new ParallelGZipArchiver();
+
+            string tempstring = $"{ args[0] } source =\"{args[1]}\"  to \" {args[2]}\"";
             try
             {
                 if (File.Exists(args[2]))
                     File.Delete(args[2]);
                 Console.WriteLine("Processing...");
+                Console.WriteLine($"Start {tempstring} ...");
                 timer.Start();
                 switch (args[0])
                 {
                     case "compress":
-                        handler.Сompress(args[1], args[2]);
+                        pgzip.Compress(args[1], args[2]);
                         break;
 
                     case "decompress":
@@ -54,6 +74,7 @@ namespace ZipperVeeam
                 Environment.Exit(1);
             }
             timer.Stop();
+            Console.WriteLine($"End {tempstring} ...");
             Console.WriteLine($"Success! Elapsed time: {timer.ElapsedMilliseconds}ms");
             return 0;
         }

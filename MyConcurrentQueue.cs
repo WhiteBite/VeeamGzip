@@ -1,15 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace ZipperVeeam
 {
-    class ConcurrentQueue<T>
+    class MyConcurrentQueue<T>
     {
         private Queue<T> _store = new Queue<T>();
 
         private Semaphore _semEnqueue, _semDequeue;
 
-        public ConcurrentQueue(int capacity)
+        public MyConcurrentQueue(int capacity)
         {
             _semEnqueue = new Semaphore(capacity, capacity);
             _semDequeue = new Semaphore(0, capacity);
@@ -28,11 +29,12 @@ namespace ZipperVeeam
             }
             else
             {
+                Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss.fffff")}]: [{Thread.CurrentThread.ManagedThreadId}] TryEnqueue block end. Can`t get Semaphore");
                 return false;
             }
         }
 
-        public bool TryDequeue(out T element, int timeout = 100)
+        public bool TryDequeue(out T element, int timeout = Constants.Timeout)
         {
             if (_semDequeue.WaitOne(timeout))
             {
@@ -46,6 +48,7 @@ namespace ZipperVeeam
             else
             {
                 element = default;
+                Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss.fffff")}]: [{Thread.CurrentThread.ManagedThreadId}] TryDequeue block end. Can`t get Semaphore");
                 return false;
             }
         }

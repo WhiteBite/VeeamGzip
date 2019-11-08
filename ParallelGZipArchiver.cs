@@ -10,66 +10,39 @@ namespace ZipperVeeam
         public Exception Exception { get; protected set; }
         private ParallelByteArrayTransformer _transformer = new ParallelByteArrayTransformer();
 
-        public bool Compress(Stream source, Stream destination)
-        {
-            var blockSupplier = new NonCompressedBlockSupplier(source, Constants.BufSize);
-            // Сжимает блок и в поле MTIME заголовка записывает размер выходного потока
-            if (_transformer.Transform(blockSupplier, destination,true))
-                return true;
-            else
-            {
-                Exception = new OperationCanceledException("Operation was cancelled by user."); ;
-                return false;
-            }
-        }
+        public static FileStream _source;
+        public static FileStream _destination;
 
-        public bool Decompress(Stream source, Stream destination)
+        public bool Compress(string source, string destination)
         {
-
-            var blockSupplier = new GZipCompressedBlockSupplier(source);
-            if (_transformer.Transform(blockSupplier, destination,false))
-                return true;
-            else
+            using (_source = new FileStream(source, FileMode.Open))
+            using (_destination = new FileStream(destination, FileMode.CreateNew))
             {
-                Exception = new OperationCanceledException("Operation was cancelled by request from user.");
-                if (Exception is IOException ||
-                    Exception is InvalidOperationException ||
-                    Exception is ObjectDisposedException)
+                var blockSupplier = new NonCompressedBlockSupplier(_source, Constants.BufSize);
+                // Сжимает блок и в поле MTIME заголовка записывает размер выходного потока
+                if (_transformer.Transform(blockSupplier, _destination, true))
+                    return true;
+                else
                 {
+                    Exception = new OperationCanceledException("Operation was cancelled by user.");
                     return false;
                 }
-
-                Console.WriteLine("Main algorythm failed. Let's try other way.");
-
-
-                return BackupDecompress(source, destination);
             }
         }
 
-        private bool BackupDecompress(Stream source, Stream destination)
+        public bool Decompress(string source, string destination)
         {
-            try
+            using (_source = new FileStream(source, FileMode.Open))
+            using (_destination = new FileStream(destination, FileMode.CreateNew))
             {
-                var buf = new byte[Constants.BufSize];
-                var bytesRead = 1;
-
-                while (source.Position != source.Length)
+                var blockSupplier = new GZipCompressedBlockSupplier(_source);
+                if (_transformer.Transform(blockSupplier, _destination, false))
+                    return true;
+                else
                 {
-                    using (var gzip = new GZipStream(source, CompressionMode.Decompress, true))
-                    {
-                        while (bytesRead > 0)
-                        {
-                            bytesRead = gzip.Read(buf, 0, buf.Length);
-                            destination.Write(buf, 0, bytesRead);
-                        }
-                    }
+                    Exception = new OperationCanceledException("Operation was cancelled by request from user.");
+                    return false;
                 }
-                return true;
-            }
-            catch (Exception e)
-            {
-                Exception = e;
-                return false;
             }
         }
     }

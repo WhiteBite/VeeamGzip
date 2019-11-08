@@ -34,17 +34,17 @@ namespace ZipperVeeam
                 }
             }
         }
-        public void Сompress(string source, string destination)
-        {
-            using (_source = new FileStream(source, FileMode.Open))
-            using (_destination = new FileStream(destination, FileMode.CreateNew))
-            {
-                if (!pgzip.Compress(_source, _destination))
-                {
-                    HandlerGzip.PrintError(pgzip.Exception);
-                    Environment.Exit(1);
-                }
-            }
-        }
+        //public void Сompress(string source, string destination)
+        //{
+        //    using (_source = new FileStream(source, FileMode.Open))
+        //    using (_destination = new FileStream(destination, FileMode.CreateNew))
+        //    {
+        //        if (!pgzip.Compress(_source, _destination))
+        //        {
+        //            HandlerGzip.PrintError(pgzip.Exception);
+        //            Environment.Exit(1);
+        //        }
+        //    }
+        //}
     }
 }

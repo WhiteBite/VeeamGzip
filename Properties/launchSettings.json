@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ZipperVeeam": {
+      "commandName": "Project",
+      "commandLineArgs": "decompress srv.log31 srv.log2"
+    }
+  }
+}
