@@ -59,7 +59,7 @@ namespace ZipperVeeam
                 var buf = new byte[Constants.HeaderSize];
                 var bytesRead = SourceStream.Read(buf, 0, buf.Length);
                 if (bytesRead == 0) return new DataBlock(PartNumber++, new byte[0]);
-                if (buf[0] != Constants.HeaderByte1 || buf[1] != Constants.HeaderByte2 || buf[2] != Constants.CompressionMethod_Deflate)
+                if (buf[0] != Constants.HeaderByte1 || buf[1] != Constants.HeaderByte2 || buf[2] != Constants.CompressionMethodDeflate)
                     throw new InvalidDataException("Archive is not valid or it was not created by this program.");
 
                 var blockSize = BitConverter.ToInt32(buf, sizeof(Int32));

@@ -8,8 +8,8 @@
         public const int HeaderSize = 10;
         public const byte HeaderByte1 = 0x1f;
         public const byte HeaderByte2 = 0x8b;
-        public const byte CompressionMethod_Deflate = 0x08;
+        public const byte CompressionMethodDeflate = 0x08;
         public const int Timeout = 100;
-        public const int QueueSize = 3000;
+        public const int QueueSize = 1000;
     }
 }

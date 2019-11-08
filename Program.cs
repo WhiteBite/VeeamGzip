@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-
+using System.Threading;
 
 
 namespace ZipperVeeam
@@ -10,25 +10,23 @@ namespace ZipperVeeam
     {
         public static void Main(string[] args)
         {
-            // start(args);
-            test(2);
+            //start(args);
+            test(5);
         }
 
         public static void test(int count)
         {
 
-            //for (int i = 0; i < count; i++)
-            // {
-            //   string[] q1 = { "compress", "decompressed_test" + i.ToString() + ".iso", "compressed_test" + (i).ToString() + ".iso" };
-            //   start(q1);
-            int i = 2;
-       //     string[] q1 = { "compress", "decompressed_test" + i.ToString() + ".iso", "compressed_test" + (i).ToString() + ".iso" };
-       //     start(q1);
-            string[] q2 = { "decompress", "compressed_test" + (i).ToString() + ".iso", "decompressed_test" + (i + 1).ToString() + ".iso" };
-            start(q2);
+            for (int i = 0; i < count; i++)
+            {
+                string[] q1 = { "compress", "de_comp_srv.log" + i.ToString() /*+ ".iso"*/, "comp_srv.log" + (i).ToString() /*+ ".iso"*/ };
+                string[] q2 = { "decompress", "comp_srv.log" + (i).ToString() /*+ ".iso"*/, "de_comp_srv.log" + (i + 1).ToString() /*+ ".iso" */};
+                
+                start(q1);
+                start(q2);
+                Thread.Sleep(100);
 
-
-            //  }
+            }
         }
         public static int start(string[] args)
         {
@@ -41,17 +39,15 @@ namespace ZipperVeeam
             }
             Console.WriteLine("Start");
             var timer = new Stopwatch();
-            ZipperVeeam.HandlerGzip handler = new ZipperVeeam.HandlerGzip();
 
             ParallelGZipArchiver pgzip = new ParallelGZipArchiver();
-
-            string tempstring = $"{ args[0] } source =\"{args[1]}\"  to \" {args[2]}\"";
+            string tempString = $"{ args[0] } source =\"{args[1]}\"  to \" {args[2]}\"";
             try
             {
                 if (File.Exists(args[2]))
                     File.Delete(args[2]);
                 Console.WriteLine("Processing...");
-                Console.WriteLine($"Start {tempstring} ...");
+                Console.WriteLine($"Start {tempString} ...");
                 timer.Start();
                 switch (args[0])
                 {
@@ -60,7 +56,7 @@ namespace ZipperVeeam
                         break;
 
                     case "decompress":
-                        handler.Decompress(args[1], args[2]);
+                        pgzip.Decompress(args[1], args[2]);
                         break;
 
                     default:
@@ -74,7 +70,7 @@ namespace ZipperVeeam
                 Environment.Exit(1);
             }
             timer.Stop();
-            Console.WriteLine($"End {tempstring} ...");
+            Console.WriteLine($"End {tempString} ...");
             Console.WriteLine($"Success! Elapsed time: {timer.ElapsedMilliseconds}ms");
             return 0;
         }

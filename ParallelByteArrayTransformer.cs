@@ -24,7 +24,17 @@ namespace ZipperVeeam
             try
             {
                 var threadList = new List<Thread>();
-                ThreadFunc threadFunc = new ThreadFunc(transformMethod);
+                //ThreadFunc threadFunc = new ThreadFunc();
+                ThreadFunc threadFunc;
+                if (transformMethod)
+                {
+                     threadFunc = new Compresser();
+                }
+                else
+                {
+                     threadFunc = new Decompresser();
+                }
+
                 var supplier = new Thread(threadFunc.Supply) { Name = "Supplier", IsBackground = true, Priority = ThreadPriority.Normal };
                 threadList.Add(supplier);
                 supplier.Start(blockSupplier);

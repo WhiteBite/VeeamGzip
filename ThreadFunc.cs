@@ -34,10 +34,9 @@ namespace ZipperVeeam
         /// true - Compress
         /// </summary>
         /// <param name="compressMethod"></param>
-        public ThreadFunc(bool compressMethod)
+        public ThreadFunc()
         {
             ex = null;
-            isCompress = compressMethod;
         }
 
 
@@ -55,6 +54,10 @@ namespace ZipperVeeam
             }
         }
 
+        public virtual void Work(DataBlock dataBlock)
+        {
+
+        }
         public void _DeCompressMethod(DataBlock dataBlock)
         {
             using (var ms = new MemoryStream(dataBlock.Data))
@@ -76,12 +79,6 @@ namespace ZipperVeeam
             }
         }
 
-        public void _ConsumeMethod(DataBlock dataBlock, Stream destination)
-        {
-            Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fffff}]: [{Thread.CurrentThread.ManagedThreadId}] _ConsumeMethod block #{dataBlock.ID} start");
-            destination.Write(dataBlock.Data, 0, dataBlock.Size);
-            Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss.fffff")}]: [{Thread.CurrentThread.ManagedThreadId}] _ConsumeMethod block #{dataBlock.ID} end");
-        }
 
         public void Supply(object o)
         { 
@@ -125,10 +122,7 @@ namespace ZipperVeeam
                         break;
                     }
                     Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss.fffff")}]: [{Thread.CurrentThread.ManagedThreadId}] Processing block #{dataBlock.ID}");
-                    if (isCompress)
-                        _CompressMethod(dataBlock);
-                    else
-                        _DeCompressMethod(dataBlock);
+                    Work(dataBlock);
                     while (!queue2.TryEnqueue(dataBlock) && localException != null) ;
                 }
             }
@@ -156,7 +150,8 @@ namespace ZipperVeeam
 
                     if (dataBlock.ID == partNo)
                     {
-                        _ConsumeMethod(dataBlock, destination);
+                        //_ConsumeMethod(dataBlock, destination);
+                        destination.Write(dataBlock.Data, 0, dataBlock.Size);
                         partNo++;
                     }
                     else lostAndFound.Add(dataBlock);
@@ -175,7 +170,8 @@ namespace ZipperVeeam
                             exit = true;
                             break;
                         }
-                        _ConsumeMethod(dataBlock, destination);
+                        //_ConsumeMethod(dataBlock, destination);
+                        destination.Write(dataBlock.Data, 0, dataBlock.Size);
                     }
                     if (exit) break;
                 }
