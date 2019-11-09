@@ -28,11 +28,11 @@ namespace ZipperVeeam
                 ThreadFunc threadFunc;
                 if (transformMethod)
                 {
-                     threadFunc = new Compresser();
+                     threadFunc = new Compressor();
                 }
                 else
                 {
-                     threadFunc = new Decompresser();
+                     threadFunc = new Decompressor();
                 }
 
                 var supplier = new Thread(threadFunc.Supply) { Name = "Supplier", IsBackground = true, Priority = ThreadPriority.Normal };
@@ -63,7 +63,7 @@ namespace ZipperVeeam
             }
             catch (Exception e)
             {
-                ZipperVeeam.HandlerGzip.PrintError(e);
+                ZipperVeeam.InfoPrinter.PrintError(e);
                 return false;
             }
             return true;

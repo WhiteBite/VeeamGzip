@@ -2,20 +2,15 @@
 
 namespace ZipperVeeam
 {
-    class DataBlock
+    internal class DataBlock
     {
         public int ID { get; }
 
         private byte[] _data;
-        public byte[] Data { get => _data; set { _data = value; } }
-
-        public int Size
-        {
-            get
-            {
-                return Data?.Length ?? 0;
-            }
+        public byte[] Data { get => _data; set => _data = value;
         }
+
+        public int Size => Data?.Length ?? 0;
 
         public DataBlock(int id, byte[] data)
         {

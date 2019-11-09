@@ -3,7 +3,7 @@ using System.IO;
 
 namespace ZipperVeeam
 {
-    internal static class HandlerGzip
+    internal static class InfoPrinter
     {
         public static void PrintUsage()
         {

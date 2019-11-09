@@ -6,9 +6,10 @@ namespace ZipperVeeam
 {
     class MyConcurrentQueue<T>
     {
-        private Queue<T> _store = new Queue<T>();
+        private readonly Queue<T> _store = new Queue<T>();
 
-        private Semaphore _semEnqueue, _semDequeue;
+        private readonly Semaphore _semEnqueue;
+        private readonly Semaphore _semDequeue;
 
         public MyConcurrentQueue(int capacity)
         {

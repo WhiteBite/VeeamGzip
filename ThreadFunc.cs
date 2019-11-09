@@ -13,7 +13,6 @@ namespace ZipperVeeam
         private Exception ex;
         private object locker = new object();
 
-        bool isCompress = false;
         bool _exiting = false;
         public Exception localException
         {
@@ -40,46 +39,10 @@ namespace ZipperVeeam
         }
 
 
-        public void _CompressMethod(DataBlock dataBlock)
-        {
-            using (var ms = new MemoryStream())
-            {
-                using (var gzip = new GZipStream(ms, CompressionMode.Compress, true))
-                {
-                    gzip.Write(dataBlock.Data, 0, dataBlock.Size);
-                }
-                ms.Seek(4, 0);
-                ms.Write(BitConverter.GetBytes((int)ms.Length), 0, 4);
-                dataBlock.Data = ms.ToArray();
-            }
-        }
-
         public virtual void Work(DataBlock dataBlock)
         {
 
         }
-        public void _DeCompressMethod(DataBlock dataBlock)
-        {
-            using (var ms = new MemoryStream(dataBlock.Data))
-            using (var gzip = new GZipStream(ms, CompressionMode.Decompress))
-            {
-                var outbuf = new byte[ms.Length * 2];
-                int bytesRead = 1, offset = 0;
-
-                while (bytesRead > 0)
-                {
-                    bytesRead = gzip.Read(outbuf, offset, outbuf.Length - offset);
-                    offset += bytesRead;
-
-                    if (offset == outbuf.Length) Array.Resize(ref outbuf, outbuf.Length * 2);
-                }
-
-                Array.Resize(ref outbuf, offset);
-                dataBlock.Data = outbuf;
-            }
-        }
-
-
         public void Supply(object o)
         { 
             try
