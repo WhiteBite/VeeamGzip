@@ -10,7 +10,7 @@ namespace ZipperVeeam
         public static void Main(string[] args)
         {
             //start(args);
-            Test(5);
+            Test(1);
         }
 
         public static void Test(int count)
@@ -18,16 +18,17 @@ namespace ZipperVeeam
 
             for (int i = 0; i < count; i++)
             {
-                string[] q1 = { "compress", "de_comp_srv_" + i.ToString() + ".log", "comp_srv_" + (i + 1).ToString() + ".log" };
+                string format = ".iso";
+                string[] q1 = { "compress", "decompressed_test_" + i.ToString() + format, "compressed_test_" + (i + 1).ToString() + format };
                 //string[] q2 = { "compress", "comp_srv.log" + (i).ToString() /*+ ".iso"*/, "comp_srv.log" + (i+1).ToString() /*+ ".iso"*/ };
-                string[] q3 = { "decompress", "comp_srv_" + (i+1).ToString() + ".log", "de_comp_srv_" + (i + 1).ToString() + ".log" };
+                string[] q3 = { "decompress", "compressed_test_" + (i+1).ToString() + format, "decompressed_test_" + (i + 1).ToString() + format };
                 //string[] q4 = { "decompress", "de_comp_srv.log" + (i + 1).ToString() /*+ ".iso", "de_comp_srv.log" + (i + 2).ToString() /*+ ".iso" */};
 
-                Start(q1);
+                Start(q3);
                 //Thread.Sleep(100);
                 //Start(q2);
                 //Thread.Sleep(100);
-                Start(q3);
+                //Start(q3);
                 //Thread.Sleep(100);
                 //Start(q4);
                 //Thread.Sleep(100);

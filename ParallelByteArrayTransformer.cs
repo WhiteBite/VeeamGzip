@@ -7,7 +7,7 @@ namespace ZipperVeeam
 {
     internal class ParallelByteArrayTransformer
     {
-        private int _processorCount;
+        private readonly int _processorCount;
 
 
         public ParallelByteArrayTransformer()
@@ -24,7 +24,6 @@ namespace ZipperVeeam
             try
             {
                 var threadList = new List<Thread>();
-                //ThreadFunc threadFunc = new ThreadFunc();
                 ThreadFunc threadFunc;
                 if (transformMethod)
                 {
@@ -38,9 +37,7 @@ namespace ZipperVeeam
                 var supplier = new Thread(threadFunc.Supply) { Name = "Supplier", IsBackground = true, Priority = ThreadPriority.Normal };
                 threadList.Add(supplier);
                 supplier.Start(blockSupplier);
-                int procLim = _processorCount - 2;
-                if (procLim <= 0)
-                    procLim = 1;
+                int procLim = _processorCount ;
                 var processors = new Thread[procLim];
                 for (int i = 0; i < procLim; i++)
                 {

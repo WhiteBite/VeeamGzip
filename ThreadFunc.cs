@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
-using System.Threading;
 
 namespace ZipperVeeam
 {
@@ -13,8 +11,8 @@ namespace ZipperVeeam
         private Exception _ex;
         private readonly object _locker = new object();
 
-        bool _exiting = false;
-        public Exception localException
+        bool _exiting;
+        public Exception LocalException
         {
             get
             {
@@ -28,21 +26,14 @@ namespace ZipperVeeam
             }
         }
 
-        /// <summary>
-        /// false - Decompress;
-        /// true - Compress
-        /// </summary>
-        /// <param name="compressMethod"></param>
+
         public ThreadFunc()
         {
             _ex = null;
         }
 
 
-        public virtual void Work(DataBlock dataBlock)
-        {
-
-        }
+        public virtual void Work(DataBlock dataBlock) { }
         public void Supply(object o)
         {
             try
@@ -52,13 +43,13 @@ namespace ZipperVeeam
                 {
                     dataBlock = supp.Next();
 
-                    while (!_queue1.TryEnqueue(dataBlock) && localException != null) ;
+                    while (!_queue1.TryEnqueue(dataBlock) && LocalException != null) ;
                 }
                 while (dataBlock.Size > 0);
             }
             catch (Exception e)
             {
-                localException = e;
+                LocalException = e;
             }
 
 
@@ -71,22 +62,22 @@ namespace ZipperVeeam
                 while (true)
                 {
                     DataBlock dataBlock;
-                    while (!_queue1.TryDequeue(out dataBlock) && localException == null && !_exiting) ;
-                    if (localException != null || _exiting) break;
+                    while (!_queue1.TryDequeue(out dataBlock) && LocalException == null && !_exiting) ;
+                    if (LocalException != null || _exiting) break;
 
                     if (dataBlock.Size == 0)
                     {
-                        while (!_queue2.TryEnqueue(dataBlock) && localException != null) ;
+                        while (!_queue2.TryEnqueue(dataBlock) && LocalException != null) ;
                         _exiting = true;
                         break;
                     }
                     Work(dataBlock);
-                    while (!_queue2.TryEnqueue(dataBlock) && localException != null) ;
+                    while (!_queue2.TryEnqueue(dataBlock) && LocalException != null) ;
                 }
             }
             catch (Exception e)
             {
-                localException = e;
+                LocalException = e;
             }
         }
 
@@ -102,8 +93,8 @@ namespace ZipperVeeam
                 while (true)
                 {
                     DataBlock dataBlock;
-                    while (!_queue2.TryDequeue(out dataBlock, timeout: 100) && localException == null && !_exiting) ;
-                    if (localException != null) break;
+                    while (!_queue2.TryDequeue(out dataBlock, timeout: 100) && LocalException == null && !_exiting) ;
+                    if (LocalException != null) break;
 
                     if (dataBlock.ID == partNo)
                     {
@@ -135,7 +126,7 @@ namespace ZipperVeeam
             }
             catch (Exception e)
             {
-                localException = e;
+                LocalException = e;
             }
         }
     }

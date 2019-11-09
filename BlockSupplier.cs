@@ -17,7 +17,7 @@ namespace ZipperVeeam
     }
     internal class NonCompressedBlockSupplier : BlockSupplier
     {
-        private int _blockSize;
+        private readonly int _blockSize;
 
         public NonCompressedBlockSupplier(Stream sourceStream, int blockSize) : base(sourceStream)
         {
@@ -62,7 +62,7 @@ namespace ZipperVeeam
                 if (buf[0] != Constants.HeaderByte1 || buf[1] != Constants.HeaderByte2 || buf[2] != Constants.CompressionMethodDeflate)
                     throw new InvalidDataException("Archive is not valid or it was not created by this program.");
 
-                var blockSize = BitConverter.ToInt32(buf, sizeof(Int32));
+                var blockSize = BitConverter.ToInt32(buf, sizeof(int));
                 buf = new byte[blockSize];
 
                 SourceStream.Position -= Constants.HeaderSize;
