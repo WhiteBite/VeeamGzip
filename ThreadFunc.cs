@@ -8,23 +8,23 @@ namespace ZipperVeeam
 {
     class ThreadFunc
     {
-        private MyConcurrentQueue<DataBlock> queue1 = new MyConcurrentQueue<DataBlock>(Constants.QueueSize);
-        private MyConcurrentQueue<DataBlock> queue2 = new MyConcurrentQueue<DataBlock>(Constants.QueueSize);
-        private Exception ex;
-        private object locker = new object();
+        private readonly MyConcurrentQueue<DataBlock> _queue1 = new MyConcurrentQueue<DataBlock>(Constants.QueueSize);
+        private readonly MyConcurrentQueue<DataBlock> _queue2 = new MyConcurrentQueue<DataBlock>(Constants.QueueSize);
+        private Exception _ex;
+        private readonly object _locker = new object();
 
         bool _exiting = false;
         public Exception localException
         {
             get
             {
-                lock (locker)
-                    return ex;
+                lock (_locker)
+                    return _ex;
             }
             set
             {
-                lock (locker)
-                    ex = value;
+                lock (_locker)
+                    _ex = value;
             }
         }
 
@@ -35,7 +35,7 @@ namespace ZipperVeeam
         /// <param name="compressMethod"></param>
         public ThreadFunc()
         {
-            ex = null;
+            _ex = null;
         }
 
 
@@ -44,18 +44,15 @@ namespace ZipperVeeam
 
         }
         public void Supply(object o)
-        { 
+        {
             try
             {
                 BlockSupplier supp = (BlockSupplier)o;
-                DataBlock dataBlock;
-                Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss.fffff")}]: [{Thread.CurrentThread.ManagedThreadId}] Supply block start");
-                do
+                DataBlock dataBlock; do
                 {
                     dataBlock = supp.Next();
 
-                    Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss.fffff")}]: [{Thread.CurrentThread.ManagedThreadId}] Supply block #{dataBlock.ID}");
-                    while (!queue1.TryEnqueue(dataBlock) && localException != null) ;
+                    while (!_queue1.TryEnqueue(dataBlock) && localException != null) ;
                 }
                 while (dataBlock.Size > 0);
             }
@@ -63,37 +60,34 @@ namespace ZipperVeeam
             {
                 localException = e;
             }
-            Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss.fffff")}]: [{Thread.CurrentThread.ManagedThreadId}] Supply block end");
+
 
         }
 
         public void Process()
         {
-            DataBlock dataBlock;
-            Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss.fffff")}]: [{Thread.CurrentThread.ManagedThreadId}] Processing block start");
             try
             {
                 while (true)
                 {
-                    while (!queue1.TryDequeue(out dataBlock) && localException == null && !_exiting) ;
+                    DataBlock dataBlock;
+                    while (!_queue1.TryDequeue(out dataBlock) && localException == null && !_exiting) ;
                     if (localException != null || _exiting) break;
 
                     if (dataBlock.Size == 0)
                     {
-                        while (!queue2.TryEnqueue(dataBlock) && localException != null) ;
+                        while (!_queue2.TryEnqueue(dataBlock) && localException != null) ;
                         _exiting = true;
                         break;
                     }
-                    Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss.fffff")}]: [{Thread.CurrentThread.ManagedThreadId}] Processing block #{dataBlock.ID}");
                     Work(dataBlock);
-                    while (!queue2.TryEnqueue(dataBlock) && localException != null) ;
+                    while (!_queue2.TryEnqueue(dataBlock) && localException != null) ;
                 }
             }
             catch (Exception e)
             {
                 localException = e;
             }
-            Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss.fffff")}]: [{Thread.CurrentThread.ManagedThreadId}] Processing block end");
         }
 
         public void Consume(object o)
@@ -101,14 +95,14 @@ namespace ZipperVeeam
             Stream destination = (Stream)o;
             try
             {
-                DataBlock dataBlock;
                 List<DataBlock> lostAndFound = new List<DataBlock>();
                 int partNo = 0;
                 bool exit = false;
 
                 while (true)
                 {
-                    while (!queue2.TryDequeue(out dataBlock, timeout: 100) && localException == null && !_exiting) ;
+                    DataBlock dataBlock;
+                    while (!_queue2.TryDequeue(out dataBlock, timeout: 100) && localException == null && !_exiting) ;
                     if (localException != null) break;
 
                     if (dataBlock.ID == partNo)

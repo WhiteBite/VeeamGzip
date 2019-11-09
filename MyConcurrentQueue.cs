@@ -30,7 +30,6 @@ namespace ZipperVeeam
             }
             else
             {
-                Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss.fffff")}]: [{Thread.CurrentThread.ManagedThreadId}] TryEnqueue block end. Can`t get Semaphore");
                 return false;
             }
         }
@@ -49,7 +48,6 @@ namespace ZipperVeeam
             else
             {
                 element = default;
-                Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss.fffff")}]: [{Thread.CurrentThread.ManagedThreadId}] TryDequeue block end. Can`t get Semaphore");
                 return false;
             }
         }

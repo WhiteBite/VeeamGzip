@@ -8,19 +8,19 @@ namespace ZipperVeeam
     public class ParallelGZipArchiver
     {
         public Exception Exception { get; protected set; }
-        private ParallelByteArrayTransformer _transformer = new ParallelByteArrayTransformer();
+        private readonly ParallelByteArrayTransformer _transformer = new ParallelByteArrayTransformer();
 
-        public static FileStream _source;
-        public static FileStream _destination;
+        public static FileStream Source;
+        public static FileStream Destination;
 
         public bool Compress(string source, string destination)
         {
-            using (_source = new FileStream(source, FileMode.Open))
-            using (_destination = new FileStream(destination, FileMode.CreateNew))
+            using (Source = new FileStream(source, FileMode.Open))
+            using (Destination = new FileStream(destination, FileMode.CreateNew))
             {
-                var blockSupplier = new NonCompressedBlockSupplier(_source, Constants.BufSize);
+                var blockSupplier = new NonCompressedBlockSupplier(Source, Constants.BufSize);
                 // Сжимает блок и в поле MTIME заголовка записывает размер выходного потока
-                if (_transformer.Transform(blockSupplier, _destination, true))
+                if (_transformer.Transform(blockSupplier, Destination, true))
                     return true;
                 else
                 {
@@ -32,11 +32,11 @@ namespace ZipperVeeam
 
         public bool Decompress(string source, string destination)
         {
-            using (_source = new FileStream(source, FileMode.Open))
-            using (_destination = new FileStream(destination, FileMode.CreateNew))
+            using (Source = new FileStream(source, FileMode.Open))
+            using (Destination = new FileStream(destination, FileMode.CreateNew))
             {
-                var blockSupplier = new GZipCompressedBlockSupplier(_source);
-                if (_transformer.Transform(blockSupplier, _destination, false))
+                var blockSupplier = new GZipCompressedBlockSupplier(Source);
+                if (_transformer.Transform(blockSupplier, Destination, false))
                     return true;
                 else
                 {

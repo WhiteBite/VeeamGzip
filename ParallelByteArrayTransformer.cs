@@ -63,7 +63,7 @@ namespace ZipperVeeam
             }
             catch (Exception e)
             {
-                ZipperVeeam.InfoPrinter.PrintError(e);
+                InfoPrinter.PrintError(e);
                 return false;
             }
             return true;
