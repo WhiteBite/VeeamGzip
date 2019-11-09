@@ -9,32 +9,9 @@ namespace ZipperVeeam
     {
         public static void Main(string[] args)
         {
-            //start(args);
-            Test(1);
+            Start(args);
         }
 
-        public static void Test(int count)
-        {
-
-            for (int i = 0; i < count; i++)
-            {
-                string format = ".iso";
-                string[] q1 = { "compress", "decompressed_test_" + i.ToString() + format, "compressed_test_" + (i + 1).ToString() + format };
-                //string[] q2 = { "compress", "comp_srv.log" + (i).ToString() /*+ ".iso"*/, "comp_srv.log" + (i+1).ToString() /*+ ".iso"*/ };
-                string[] q3 = { "decompress", "compressed_test_" + (i+1).ToString() + format, "decompressed_test_" + (i + 1).ToString() + format };
-                //string[] q4 = { "decompress", "de_comp_srv.log" + (i + 1).ToString() /*+ ".iso", "de_comp_srv.log" + (i + 2).ToString() /*+ ".iso" */};
-
-                Start(q3);
-                //Thread.Sleep(100);
-                //Start(q2);
-                //Thread.Sleep(100);
-                //Start(q3);
-                //Thread.Sleep(100);
-                //Start(q4);
-                //Thread.Sleep(100);
-
-            }
-        }
         public static int Start(string[] args)
         {
             if (args.Length != 3) { InfoPrinter.PrintUsage(); return 0; }
@@ -48,8 +25,6 @@ namespace ZipperVeeam
 
             Console.WriteLine("Start");
             var timer = new Stopwatch();
-            //TODO
-            //обработать ошибки в нормальный вид
             ParallelGZipArchiver pgzip = new ParallelGZipArchiver();
             string tempString = $"{ args[0] } source =\"{args[1]}\"  to \" {args[2]}\"";
             try

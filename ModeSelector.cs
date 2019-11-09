@@ -11,9 +11,9 @@ namespace ZipperVeeam
             Nothing,
             Copy
         }
-
         public static void Action(string file2, IncreaseAction mode = IncreaseAction.Nothing, string file1 = "")
-        {   
+        {
+            Console.WriteLine($"Destination file will be {mode.ToString()}!");
             switch (mode)
             {
                 case IncreaseAction.Delete:
